@@ -7,7 +7,7 @@
   <hr class="my-4">
   <p class="lead"> {{ self.banner_sub_title | richtext }} </p>
   {% if self.banner_cta %}
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    <a class="btn btn-primary btn-lg" href="#" role="button">{{self.banner_cta.title}}</a>
     {% endif %}
 </div>
 
