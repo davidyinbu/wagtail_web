@@ -1,8 +1,27 @@
 from django.db import models
 from wagtail.core.fields import RichTextField
-from wagtail.models import Page
-from wagtail.admin.edit_handlers import FieldPanel,PageChooserPanel
+from wagtail.models import Page,Orderable
+
+from modelcluster.fields import ParentalKey
+
+from wagtail.admin.edit_handlers import FieldPanel,PageChooserPanel,InlinePanel,MultiFieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
+
+
+class HomePageCarouselImage(Orderable):
+    """between 1 to 5"""
+    page = ParentalKey("home.HomePage", related_name="carousel_images")
+    carousel_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null= True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name="+"
+    )
+
+    panels =[
+        ImageChooserPanel("carousel_image")
+    ]
 
 
 class HomePage(Page):
@@ -29,11 +48,19 @@ class HomePage(Page):
     max_count = 1
 
     content_panels = Page.content_panels + [
-        FieldPanel("banner_title"),
-        FieldPanel("banner_sub_title"),
-        ImageChooserPanel("banner_image"),
-        PageChooserPanel("banner_cta"),
+        MultiFieldPanel([
+            FieldPanel("banner_title"),
+            FieldPanel("banner_sub_title"),
+            ImageChooserPanel("banner_image"),
+            PageChooserPanel("banner_cta"),
+            ], heading="Banner Options"),
         FieldPanel("linkedin_url"),
+        MultiFieldPanel(
+            [
+            InlinePanel("carousel_images",min_num=0,max_num=5,label="Image"),
+            ],
+            heading="Carousel Images"
+        )
 
     ]
 
